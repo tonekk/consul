@@ -1,5 +1,5 @@
 <div class="subscriptions-form">
-  <%= form_for @user, url: subscriptions_path(@user.subscriptions_token) do |f| %>
+  <%= form_for @user, url: subscriptions_path(subscriptions_token: @user.subscriptions_token) do |f| %>
     <div class="small-12 medium-7">
       <h2><%= t("subscriptions.edit.notifications") %></h2>
 
