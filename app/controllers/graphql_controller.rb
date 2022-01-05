@@ -6,22 +6,44 @@ class GraphqlController < ApplicationController
   skip_before_action :verify_authenticity_token
   skip_authorization_check
 
+  class QueryStringError < StandardError; end
+
   def execute
-    variables = prepare_variables(params[:variables])
-    query = params[:query]
-    operation_name = params[:operationName]
-    context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
-    }
-    result = ConsulSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
-    render json: result
-  rescue => e
-    raise e unless Rails.env.development?
-    handle_error_in_development e
+    begin
+      raise GraphqlController::QueryStringError if query_string.nil?
+
+      variables = prepare_variables(params[:variables])
+      operation_name = params[:operationName]
+      context = {
+        # Query context goes here, for example:
+        # current_user: current_user,
+      }
+      result = ConsulSchema.execute(query_string,
+        variables: variables,
+        context: context,
+        operation_name: operation_name
+      )
+      render json: result
+    rescue GraphqlController::QueryStringError
+      render json: { message: "Query string not present" }, status: :bad_request
+    rescue JSON::ParserError
+      render json: { message: "Error parsing JSON" }, status: :bad_request
+    rescue GraphQL::ParseError
+      render json: { message: "Query string is not valid JSON" }, status: :bad_request
+    rescue ArgumentError => e
+      render json: { message: e.message }, status: :bad_request
+    end
   end
 
   private
+
+    def query_string
+      if request.headers["CONTENT_TYPE"] == "application/graphql"
+        request.body.string
+      else
+        params[:query]
+      end
+    end
 
     # Handle variables in form data, JSON body, or a blank value
     def prepare_variables(variables_param)
@@ -41,13 +63,6 @@ class GraphqlController < ApplicationController
       else
         raise ArgumentError, "Unexpected parameter: #{variables_param}"
       end
-    end
-
-    def handle_error_in_development(e)
-      logger.error e.message
-      logger.error e.backtrace.join("\n")
-
-      render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
     end
 
 end
