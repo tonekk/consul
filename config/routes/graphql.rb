@@ -1,3 +1,2 @@
-get "/graphql", to: "graphql#query"
-post "/graphql", to: "graphql#query"
+post "/graphql", to: "graphql#execute"
 mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
