@@ -15,5 +15,9 @@ module Types
     field_with_deprecated_sibling :confidence_score, Integer, null: true
     field_with_deprecated_sibling :public_author, Types::UserType, null: true
     field_with_deprecated_sibling :votes_for, Types::VoteType.connection_type, null: true
+
+    def tags
+      object.tags.public_for_api
+    end
   end
 end

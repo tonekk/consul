@@ -21,5 +21,9 @@ module Types
     field_with_deprecated_sibling :proposal_notifications, Types::ProposalNotificationType.connection_type, null: true
     field_with_deprecated_sibling :public_author, Types::UserType, null: true
     field_with_deprecated_sibling :votes_for, Types::VoteType.connection_type, null: true
+
+    def tags
+      object.tags.public_for_api
+    end
   end
 end
