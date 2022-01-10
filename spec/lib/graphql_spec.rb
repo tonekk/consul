@@ -33,8 +33,8 @@ describe "Consul Schema" do
   let(:proposal) { create(:proposal, author: user) }
 
   it "returns fields of Int type" do
-    response = execute("{ proposal(id: #{proposal.id}) { id } }")
-    expect(dig(response, "data.proposal.id")).to eq(proposal.id)
+    response = execute("{ proposal(id: #{proposal.id}) { cached_votes_up } }")
+    expect(dig(response, "data.proposal.cached_votes_up")).to eq(proposal.cached_votes_up)
   end
 
   it "returns fields of String type" do
