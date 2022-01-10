@@ -64,5 +64,4 @@ class GraphqlController < ApplicationController
         raise ArgumentError, "Unexpected parameter: #{variables_param}"
       end
     end
-
 end
