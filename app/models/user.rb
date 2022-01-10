@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include GraphqlDevise::Concerns::Model
   include Verification
 
   devise :database_authenticatable, :registerable, :confirmable, :recoverable, :rememberable,
