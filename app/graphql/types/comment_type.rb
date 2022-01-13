@@ -3,6 +3,7 @@ module Types
     field :id, ID, null: false
     field :body, String, null: true
     field :ancestry, String, null: true
+    field :parent_id, ID, null: true
 
     field_with_deprecated_sibling :cached_votes_total, Integer, null: true
     field_with_deprecated_sibling :cached_votes_up, Integer, null: true
