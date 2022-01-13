@@ -1,5 +1,6 @@
 class GraphqlController < ApplicationController
   include FeatureFlags
+  include GraphqlDevise::Concerns::SetUserByToken
 
   feature_flag :graphql_api
 
@@ -14,10 +15,7 @@ class GraphqlController < ApplicationController
 
       variables = prepare_variables(params[:variables])
       operation_name = params[:operationName]
-      context = {
-        # Query context goes here, for example:
-        # current_user: current_user,
-      }
+      context = gql_devise_context(User)
       result = ConsulSchema.execute(query_string,
         variables: variables,
         context: context,
